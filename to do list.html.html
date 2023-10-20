@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>To-Do List</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      
+      h1 {
+        text-align: center;
+      }
+      
+      #todo-input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      
+      #todo-list {
+        list-style-type: none;
+        padding: 0;
+      }
+      
+      .todo-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      
+      .todo-item > span {
+        flex-grow: 1;
+      }
+      
+      .delete-btn,
+      .edit-btn {
+        margin-left: 10px;
+        cursor: pointer;
+      }
+      
+      .edit-input {
+        width: 100%;
+        padding: 5px;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <h1>To-Do List</h1>
+    
+    <input type="text" id="todo-input" placeholder="Enter a task and press Enter">
+    
+    <ul id="todo-list"></ul>
+
+    <script>
+      
+      function createTodoItem(task) {
+        const li = document.createElement('li');
+        li.className = 'todo-item';
+        li.innerHTML = `<span>${task}</span><span class="edit-btn">Edit</span> <span class="delete-btn">Delete</span>`;
+        return li;
+      }
+  
+      
+      function enableEdit(todoItem) {
+        const task = todoItem.querySelector('span:first-child');
+        const editBtn = todoItem.querySelector('.edit-btn');
+        editBtn.innerText = 'Save';
+  
+        const editInput = document.createElement('input');
+        editInput.type = 'text';
+        editInput.value = task.innerText;
+        editInput.className = 'edit-input';
+  
+        editInput.addEventListener('keyup', function(event) {
+          if (event.keyCode === 13) { 
+            task.innerText = editInput.value.trim();
+            editBtn.innerText = 'Edit';
+            todoItem.removeChild(editInput);
+          }
+        });
+  
+        todoItem.insertBefore(editInput, task);
+        task.style.display = 'none'; 
+        editInput.focus();
+      }
+      
+      const todoInput = document.getElementById('todo-input');
+      const todoList = document.getElementById('todo-list');
+      
+ 
+      todoInput.addEventListener('keyup', function(event) {
+        if (event.keyCode === 13) {
+          const task = todoInput.value.trim();
+          
+          if (task !== '') {
+            const todoItem = createTodoItem(task);
+            todoList.appendChild(todoItem);
+            todoInput.value = '';
+          }
+        }
+      });
+      
+      
+      todoList.addEventListener('click', function(event) {
+        const target = event.target;
+        
+        if (target.classList.contains('delete-btn')) {
+          target.parentElement.remove();
+        } else if (target.classList.contains('edit-btn')) {
+          const todoItem = target.parentElement;
+          enableEdit(todoItem);
+        }
+      });
+    </script>
+  </body>
+</html>
